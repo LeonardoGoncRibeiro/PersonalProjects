@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load widget_tweaks %}
+
+<body>
+    <section class = 'container mt-2'>
+        {% include 'partials/_navbar.html' %}
+        <section class="container col-8">
+            <form action="{% url 'index' %}" method = 'POST'>
+                {% csrf_token %}
+
+                {% for field in model_form.visible_fields %}
+                    <div class="form-group"> 
+                        <label for="{{field.id_for_label}}">{{field.label}}</label>
+                        {{field|add_class:'form-control'}}
+                    </div>
+                    {% for error in field.errors %}
+                        <section class="alert alert-danger" role="alert">
+                            {{ field.errors }}
+                        </section>
+                    {% endfor %}
+                {% endfor %}
+
+                <input type="submit" value = 'Ok' class = 'btn btn-success'>
+            </form>
+        </section>
+
+        <section class="container col-8">
+            {% if resultado.fraude == 0 %}
+                <div class="alert alert-success" role="alert">
+                    A transação não é fraudulenta (Probabilidade de fraude: {{ resultado.prob }}%)!
+                </div>
+            {%elif resultado.fraude == 1 %}
+                <div class="alert alert-danger" role="alert">
+                    A transação é fraudulenta (Probabilidade de fraude: {{ resultado.prob }}%)!
+                </div>
+            {% endif %}
+        </section>
+    </section>
+</body>
+
+{% endblock %}
